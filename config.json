@@ -1,6 +1,11 @@
 {
-    "title":"Blog Title",
-    "subTitle":"Blog description",
+    "title":"24th",
+    "subTitle":"This is the 24th time",
     "avatarUrl":"https://github.githubassets.com/favicons/favicon.svg",
-    "GMEEK_VERSION":"last"
+    "GMEEK_VERSION":"last",
+    "startSite":"05/16/2025",
+    "i18n":"CN",
+    "themeMode":"fix",
+    "dayTheme":"dark",
+    "nightTheme":"dark-blue",
 }
