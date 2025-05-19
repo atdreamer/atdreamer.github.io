@@ -10,7 +10,7 @@
 羊倌儿小异也要放100只羊，他观察后发现，小同放羊的方法比较笨，他觉得草地一下能容下10只羊（带宽）吃草，所以它就一次放出去10只羊等它们回来，然后他还可以给羊剪剪羊毛。有的羊吃得快回来的早，他就把羊关到羊圈接着就再放出去几只，尽量保证草地上都有10只羊在吃草。
 
 很明显，异步放羊的效率高多了。同样的，网络世界里也是异步的效率高。那么简单的异步程序怎么实现呢，请看接下来的示例源代码：
-`python
+```python
 """
 desc:测试讲解python[版本3.8***]的异步[任务调度](https://zhida.zhihu.com/search?content_id=175153659&content_type=Article&match_order=1&q=%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6&zhida_source=entity)执行
 欢迎添加qq群:492656241
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     start_time = time.time()
     asyncio.run(main())
     print("总共消耗时间:{}".format(time.time() - start_time))
-`
+```
 以上代码主要通过sleep来模拟在耗时较长的场景中怎么通过asyncio来实现异步发起任务请求以及并发执行。逻辑说明：
 
 1、首先再次申明python的版本为3.8，因为不同的版本在python中是存在写法不同的，但就目前的版本来看，3.8版本写异步因该是最简单的了。
