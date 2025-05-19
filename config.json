@@ -8,5 +8,6 @@
     "themeMode":"fix",
     "dayTheme":"dark",
     "nightTheme":"dark-blue",
-    "allHead":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekBSZ.js'></script>"
+    "allHead":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekBSZ.js'></script>",
+    "bottomText":"转载请注明出处"
 }
