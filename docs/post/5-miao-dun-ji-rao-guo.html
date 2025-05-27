@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark-blue" data-light-theme="dark" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <script src='https://blog.meekdai.com/Gmeek/plugins/GmeekBSZ.js'></script>
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg">
+<meta name="description" content="一、5秒盾是什么
+
+1、5秒盾指 Cloudflare 的“5 秒盾”（也叫 Cloudflare 5s Challenge）。">
+<meta property="og:title" content="5秒盾及绕过">
+<meta property="og:description" content="一、5秒盾是什么
+
+1、5秒盾指 Cloudflare 的“5 秒盾”（也叫 Cloudflare 5s Challenge）。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://atdreamer.github.io/post/5-miao-dun-ji-rao-guo.html">
+<meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
+<title>5秒盾及绕过</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">5秒盾及绕过</h1>
+<div class="title-right">
+    <a href="https://atdreamer.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/atdreamer/atdreamer.github.io/issues/4" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题"style="display:none;">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>一、5秒盾是什么</p>
+<p>1、5秒盾指 Cloudflare 的“5 秒盾”（也叫 Cloudflare 5s Challenge）。这是 Cloudflare 用来防止<a href="https://so.csdn.net/so/search?q=%E6%9C%BA%E5%99%A8%E4%BA%BA&amp;spm=1001.2101.3001.7020" rel="nofollow">机器人</a>访问网站的一种机制，通常会显示一个“请稍等 5 秒钟”的页面或者“Just a moment”等形式，然后自动重定向到目标页面。<br>
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/e0614c46-2b62-4694-a1ab-cef1d8c0966e"><img src="https://github.com/user-attachments/assets/e0614c46-2b62-4694-a1ab-cef1d8c0966e" alt="Image" style="max-width: 100%;"></a></p>
+<p>2、Cloudflare 是一种基于云技术的Web应用程序防火墙（WAF），旨在保护网站免受各种Web攻击，它能够在5秒内检测到并阻止恶意流量。</p>
+<p>3、官方说明：<a href="https://www.cloudflare-cn.com/what-is-cloudflare/" rel="nofollow">https://www.cloudflare-cn.com/what-is-cloudflare/</a></p>
+<p>二、如何判断该网站有Cloudflare反爬</p>
+<p>1、常见的特征1：我们通过requests请求后，响应状态码是403，请求的时候会出现 Just a moment</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">requests</span>
+<span class="pl-s1">headers</span> <span class="pl-c1">=</span> {
+    <span class="pl-s">"user-agent"</span>: <span class="pl-s">"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"</span>
+}
+<span class="pl-s1">url</span> <span class="pl-c1">=</span> <span class="pl-s">"https://toppsta.com/books/series/29278/national-geographic-kids-readers-level-1"</span>
+<span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-s1">requests</span>.<span class="pl-c1">get</span>(<span class="pl-s1">url</span>, <span class="pl-s1">headers</span><span class="pl-c1">=</span><span class="pl-s1">headers</span>, <span class="pl-s1">timeout</span><span class="pl-c1">=</span><span class="pl-c1">10</span>)
+<span class="pl-k">print</span>("<span class="pl-c1">==</span><span class="pl-c1">==</span><span class="pl-c1">==</span><span class="pl-c1">==</span><span class="pl-c1">==</span><span class="pl-c1">==</span><span class="pl-s1">requests</span>, <span class="pl-s1">res</span>.<span class="pl-c1">status_code</span>, <span class="pl-s1">res</span>.<span class="pl-c1">cookies</span>, <span class="pl-s1">res</span>.<span class="pl-c1">text</span>)</pre></div>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/82cc4742-5c87-480d-be74-e1fdbc6be538"><img src="https://github.com/user-attachments/assets/82cc4742-5c87-480d-be74-e1fdbc6be538" alt="Image" style="max-width: 100%;"></a></p>
+<p>2、常见特征2：响应头里面的Server是cloudflare<br>
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/97dd8f91-acb8-4a73-99e7-131aca630fe8"><img src="https://github.com/user-attachments/assets/97dd8f91-acb8-4a73-99e7-131aca630fe8" alt="Image" style="max-width: 100%;"></a></p>
+<p>3、常见特征3：请求头Cookie常常有__cf_bm之类的开头，__cfduid,  __cf_clearance  等</p>
+<p>三、Cloudflare绕过</p>
+<p>1、【免费版5秒盾】在无痕模式下打开并没有跳出校验真人，而是直接是数据展示页面，但是req</p>
+<p>uests请求会是403，免费版的5秒盾可以通过cloudscraper 库过；</p>
+<p>模块安装：pip install cloudscraper</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">cloudscraper</span>
+<span class="pl-s1">scraper</span> <span class="pl-c1">=</span> <span class="pl-s1">cloudscraper</span>.<span class="pl-c1">create_scraper</span>()
+<span class="pl-s1">url</span> <span class="pl-c1">=</span> <span class="pl-s">'https://toppsta.com/books/series/29278/national-geographic-kids-readers-level-1'</span>
+<span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-s1">scraper</span>.<span class="pl-c1">get</span>(<span class="pl-s1">url</span>)
+<span class="pl-en">print</span>(<span class="pl-s">"============scraper的方式"</span>, <span class="pl-s1">res</span>.<span class="pl-c1">status_code</span>, <span class="pl-s1">res</span>.<span class="pl-c1">cookies</span>, <span class="pl-s1">res</span>.<span class="pl-c1">text</span>)</pre></div>
+<p>2、【免费版5秒盾】在无痕模式下打开并没有跳出确认真人界面，但是requests请求会是403，cloudscraper的请求也是403，但是通过curl_cffi库可以通过，检查了tls指纹；pip install curl_cffi  <a href="https://github.com/lwthiker/curl-impersonate">https://github.com/lwthiker/curl-impersonate</a></p>
+<p>参考文章：<a href="https://zhuanlan.zhihu.com/p/601474166" rel="nofollow">https://zhuanlan.zhihu.com/p/601474166</a></p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">from</span> <span class="pl-s1">curl_cffi</span> <span class="pl-k">import</span> <span class="pl-s1">requests</span> <span class="pl-k">as</span> <span class="pl-s1">cffi_requests</span>
+<span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-s1">cffi_requests</span>.<span class="pl-c1">get</span>(<span class="pl-s">"https://www.chinatimes.com/?chdtv"</span>, <span class="pl-s1">impersonate</span><span class="pl-c1">=</span><span class="pl-s">'chrome110'</span>, <span class="pl-s1">timeout</span><span class="pl-c1">=</span><span class="pl-c1">10</span>)
+<span class="pl-en">print</span>(<span class="pl-s">"============cffi_requests的方式"</span>, <span class="pl-s1">res</span>.<span class="pl-c1">status_code</span>, <span class="pl-s1">res</span>.<span class="pl-c1">cookies</span>, <span class="pl-s1">res</span>.<span class="pl-c1">text</span>)</pre></div>
+<p>3、DrissionPage自动化绕过</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-c"># 过五秒盾反爬</span>
+<span class="pl-k">from</span> <span class="pl-v">DrissionPage</span> <span class="pl-k">import</span> <span class="pl-v">ChromiumPage</span>, <span class="pl-v">ChromiumOptions</span>
+<span class="pl-k">import</span> <span class="pl-s1">platform</span>
+<span class="pl-k">from</span> <span class="pl-s1">loguru</span> <span class="pl-k">import</span> <span class="pl-s1">logger</span>
+ 
+<span class="pl-k">if</span> <span class="pl-s1">platform</span>.<span class="pl-c1">system</span>().<span class="pl-c1">lower</span>() <span class="pl-c1">==</span> <span class="pl-s">'windows'</span>:
+    <span class="pl-s1">co</span> <span class="pl-c1">=</span> <span class="pl-en">ChromiumOptions</span>().<span class="pl-c1">set_paths</span>(<span class="pl-s1">browser_path</span><span class="pl-c1">=</span><span class="pl-s">r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"</span>)
+    <span class="pl-s1">value</span> <span class="pl-c1">=</span> <span class="pl-s">'确认您是真人'</span>
+<span class="pl-k">else</span>:
+    <span class="pl-s1">co</span> <span class="pl-c1">=</span> <span class="pl-en">ChromiumOptions</span>().<span class="pl-c1">set_paths</span>(<span class="pl-s1">browser_path</span><span class="pl-c1">=</span><span class="pl-s">r"/opt/google/chrome/google-chrome"</span>)
+    <span class="pl-s1">value</span> <span class="pl-c1">=</span> <span class="pl-s">'Verify you are human'</span>
+    <span class="pl-s1">co</span>.<span class="pl-c1">headless</span>(<span class="pl-c1">True</span>)   <span class="pl-c"># 设置无头加载  无头模式是一种在浏览器没有界面的情况下运行的模式，它可以提高浏览器的性能和加载速度</span>
+    <span class="pl-s1">co</span>.<span class="pl-c1">incognito</span>(<span class="pl-c1">True</span>)  <span class="pl-c"># 无痕隐身模式打开的话，不会记住你的网站账号密码的</span>
+    <span class="pl-s1">co</span>.<span class="pl-c1">set_argument</span>(<span class="pl-s">'--no-sandbox'</span>)  <span class="pl-c"># 禁用沙箱 禁用沙箱可以避免浏览器在加载页面时进行安全检查,从而提高加载速度 默认情况下，所有Chrome 用户都启用了隐私沙盒选项  https://zhuanlan.zhihu.com/p/475639754</span>
+    <span class="pl-s1">co</span>.<span class="pl-c1">set_argument</span>(<span class="pl-s">"--disable-gpu"</span>)  <span class="pl-c"># 禁用GPU加速可以避免浏览器在加载页面时使用过多的计算资源，从而提高加载速度</span>
+    <span class="pl-s1">co</span>.<span class="pl-c1">set_user_agent</span>(<span class="pl-s1">user_agent</span><span class="pl-c1">=</span><span class="pl-s">'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'</span>)  <span class="pl-c"># 设置ua</span>
+ 
+ 
+<span class="pl-s1">browser</span> <span class="pl-c1">=</span> <span class="pl-en">ChromiumPage</span>(<span class="pl-s1">co</span>)  <span class="pl-c"># 创建对象</span>
+<span class="pl-s1">browser</span>.<span class="pl-c1">set</span>.<span class="pl-c1">window</span>.<span class="pl-c1">max</span>()
+<span class="pl-s1">browser</span>.<span class="pl-c1">get</span>(<span class="pl-s">"https://cn.airbusan.com/content/common/customercenter/noticeList"</span>, <span class="pl-s1">retry</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">interval</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">timeout</span><span class="pl-c1">=</span><span class="pl-c1">15</span>)   <span class="pl-c"># 访问网</span>
+ 
+<span class="pl-s1">logger</span>.<span class="pl-c1">info</span>(<span class="pl-s">f"user_agent is <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">browser</span>.<span class="pl-c1">user_agent</span><span class="pl-kos">}</span></span>"</span>)
+<span class="pl-s1">browser</span>.<span class="pl-c1">wait</span>(<span class="pl-c1">2</span>)
+<span class="pl-k">for</span> <span class="pl-s1">i</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-c1">20</span>):
+    <span class="pl-k">if</span> <span class="pl-s1">browser</span>.<span class="pl-c1">ele</span>(<span class="pl-s">f'x://input[@value="<span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">value</span><span class="pl-kos">}</span></span>"]'</span>, <span class="pl-s1">timeout</span><span class="pl-c1">=</span><span class="pl-c1">3</span>):
+        <span class="pl-s1">logger</span>.<span class="pl-c1">warning</span>(<span class="pl-s">f"retry <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">i</span><span class="pl-c1">+</span><span class="pl-c1">1</span><span class="pl-kos">}</span></span> times, Verify you are human click now"</span>)
+        <span class="pl-s1">browser</span>.<span class="pl-c1">ele</span>(<span class="pl-s">f'x://input[@value="<span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">value</span><span class="pl-kos">}</span></span>"]'</span>).<span class="pl-c1">click</span>()
+        <span class="pl-s1">browser</span>.<span class="pl-c1">wait</span>(<span class="pl-c1">2</span>)
+    <span class="pl-k">if</span> <span class="pl-c1">not</span> <span class="pl-s1">browser</span>.<span class="pl-c1">cookies</span>().<span class="pl-c1">as_dict</span>().<span class="pl-c1">get</span>(<span class="pl-s">'cf_clearance'</span>):
+        <span class="pl-s1">logger</span>.<span class="pl-c1">error</span>(<span class="pl-s">f"retry <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">i</span><span class="pl-c1">+</span><span class="pl-c1">1</span><span class="pl-kos">}</span></span> times, browser_cookie is <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">browser</span>.<span class="pl-c1">cookies</span>().<span class="pl-c1">as_dict</span>()<span class="pl-kos">}</span></span>"</span>)
+        <span class="pl-k">continue</span>
+    <span class="pl-k">else</span>:
+        <span class="pl-s1">logger</span>.<span class="pl-c1">success</span>(<span class="pl-s">f"retry <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">i</span><span class="pl-c1">+</span><span class="pl-c1">1</span><span class="pl-kos">}</span></span> times, browser_cookie is <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">browser</span>.<span class="pl-c1">cookies</span>().<span class="pl-c1">as_dict</span>()<span class="pl-kos">}</span></span>"</span>)
+        <span class="pl-k">break</span>
+<span class="pl-c"># with open(r"./ccc.html", "w") as f:</span>
+<span class="pl-c">#     f.write(browser.html)</span>
+<span class="pl-s1">browser</span>.<span class="pl-c1">wait</span>(<span class="pl-c1">2</span>)
+<span class="pl-s1">browser</span>.<span class="pl-c1">wait</span>.<span class="pl-c1">ele_displayed</span>(<span class="pl-s">'x://td[@class="subject"]/a'</span>, <span class="pl-s1">timeout</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)
+<span class="pl-k">for</span> <span class="pl-s1">tr</span> <span class="pl-c1">in</span> <span class="pl-s1">browser</span>.<span class="pl-c1">eles</span>(<span class="pl-s">'x://div[@class="boardList mgt60"]//tr'</span>, <span class="pl-s1">timeout</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)[<span class="pl-c1">1</span>:]:
+    <span class="pl-s1">tds</span> <span class="pl-c1">=</span> [<span class="pl-s1">td</span>.<span class="pl-c1">text</span> <span class="pl-k">for</span> <span class="pl-s1">td</span> <span class="pl-c1">in</span> <span class="pl-s1">tr</span>.<span class="pl-c1">eles</span>(<span class="pl-s">"x://td"</span>, <span class="pl-s1">timeout</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)]
+    <span class="pl-s1">detail_url</span> <span class="pl-c1">=</span> <span class="pl-s1">tr</span>.<span class="pl-c1">ele</span>(<span class="pl-s">'x://td[@class="subject"]/a'</span>).<span class="pl-c1">attr</span>(<span class="pl-s">'href'</span>)
+    <span class="pl-s1">logger</span>.<span class="pl-c1">info</span>(<span class="pl-s">f"list_page_company is <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">tds</span><span class="pl-kos">}</span></span> , a_href is <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">detail_url</span><span class="pl-kos">}</span></span>"</span>)
+<span class="pl-c"># 对整页截图并保存</span>
+<span class="pl-c"># browser.get_screenshot(path=r'./headless_False.png', full_page=True)</span>
+<span class="pl-s1">browser</span>.<span class="pl-c1">get_screenshot</span>(<span class="pl-s1">path</span><span class="pl-c1">=</span><span class="pl-s">r'./headless_True.png'</span>, <span class="pl-s1">full_page</span><span class="pl-c1">=</span><span class="pl-c1">True</span>)
+<span class="pl-s1">browser</span>.<span class="pl-c1">quit</span>()</pre></div></div>
+<div style="font-size:small;margin-top:8px;float:right;">转载请注明出处</div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://atdreamer.github.io">24th</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if("05/16/2025"!=""){
+    var startSite=new Date("05/16/2025");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","atdreamer/atdreamer.github.io");
+    script.setAttribute("issue-term","title");
+    
+    script.setAttribute("theme","dark-blue");
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
