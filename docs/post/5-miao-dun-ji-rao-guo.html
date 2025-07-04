@@ -86,7 +86,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <div id="content">
 <div class="markdown-body" id="postBody"><p>一、5秒盾是什么</p>
 <p>1、5秒盾指 Cloudflare 的“5 秒盾”（也叫 Cloudflare 5s Challenge）。这是 Cloudflare 用来防止<a href="https://so.csdn.net/so/search?q=%E6%9C%BA%E5%99%A8%E4%BA%BA&amp;spm=1001.2101.3001.7020" rel="nofollow">机器人</a>访问网站的一种机制，通常会显示一个“请稍等 5 秒钟”的页面或者“Just a moment”等形式，然后自动重定向到目标页面。<br>
-<a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/e0614c46-2b62-4694-a1ab-cef1d8c0966e"><img src="https://github.com/user-attachments/assets/e0614c46-2b62-4694-a1ab-cef1d8c0966e" alt="Image" style="max-width: 100%;"></a></p>
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/e0614c46-2b62-4694-a1ab-cef1d8c0966e"><img src="https://github.com/user-attachments/assets/e0614c46-2b62-4694-a1ab-cef1d8c0966e" alt="Image" style="max-width: 100%; height: auto;"></a></p>
 <p>2、Cloudflare 是一种基于云技术的Web应用程序防火墙（WAF），旨在保护网站免受各种Web攻击，它能够在5秒内检测到并阻止恶意流量。</p>
 <p>3、官方说明：<a href="https://www.cloudflare-cn.com/what-is-cloudflare/" rel="nofollow">https://www.cloudflare-cn.com/what-is-cloudflare/</a></p>
 <p>二、如何判断该网站有Cloudflare反爬</p>
@@ -98,9 +98,9 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-s1">url</span> <span class="pl-c1">=</span> <span class="pl-s">"https://toppsta.com/books/series/29278/national-geographic-kids-readers-level-1"</span>
 <span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-s1">requests</span>.<span class="pl-c1">get</span>(<span class="pl-s1">url</span>, <span class="pl-s1">headers</span><span class="pl-c1">=</span><span class="pl-s1">headers</span>, <span class="pl-s1">timeout</span><span class="pl-c1">=</span><span class="pl-c1">10</span>)
 <span class="pl-k">print</span>("<span class="pl-c1">==</span><span class="pl-c1">==</span><span class="pl-c1">==</span><span class="pl-c1">==</span><span class="pl-c1">==</span><span class="pl-c1">==</span><span class="pl-s1">requests</span>, <span class="pl-s1">res</span>.<span class="pl-c1">status_code</span>, <span class="pl-s1">res</span>.<span class="pl-c1">cookies</span>, <span class="pl-s1">res</span>.<span class="pl-c1">text</span>)</pre></div>
-<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/82cc4742-5c87-480d-be74-e1fdbc6be538"><img src="https://github.com/user-attachments/assets/82cc4742-5c87-480d-be74-e1fdbc6be538" alt="Image" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/82cc4742-5c87-480d-be74-e1fdbc6be538"><img src="https://github.com/user-attachments/assets/82cc4742-5c87-480d-be74-e1fdbc6be538" alt="Image" style="max-width: 100%; height: auto;"></a></p>
 <p>2、常见特征2：响应头里面的Server是cloudflare<br>
-<a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/97dd8f91-acb8-4a73-99e7-131aca630fe8"><img src="https://github.com/user-attachments/assets/97dd8f91-acb8-4a73-99e7-131aca630fe8" alt="Image" style="max-width: 100%;"></a></p>
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/97dd8f91-acb8-4a73-99e7-131aca630fe8"><img src="https://github.com/user-attachments/assets/97dd8f91-acb8-4a73-99e7-131aca630fe8" alt="Image" style="max-width: 100%; height: auto;"></a></p>
 <p>3、常见特征3：请求头Cookie常常有__cf_bm之类的开头，__cfduid,  __cf_clearance  等</p>
 <p>三、Cloudflare绕过</p>
 <p>1、【免费版5秒盾】在无痕模式下打开并没有跳出校验真人，而是直接是数据展示页面，但是req</p>
